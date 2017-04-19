@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+<title>A space with a screen and some objects</title>
+<script src="https://aframe.io/releases/0.3.0/aframe.min.js"></script>
+<script src="https://sdk.altvr.com/libs/altspace.js/2.2.0/altspace.min.js"></script>
+<script src="https://npmcdn.com/aframe-animation-component@3.0.1"></script>
+<script src="https://npmcdn.com/aframe-event-set-component@3.0.1"></script>
+<script src="https://npmcdn.com/aframe-template-component@3.1.1"></script>
+<script src="components/avr-visible.js"></script>
+<script src="components/set-model.js"></script>
+</head>
+
+<body>
+
+<!-- set up the scene -->
+<a-scene debug altspace="fullspace: true" sync-system="author: altspacevr; app: debby-test-sync">
+
+<!-- add a 2D browser. this happens in scene setup, so should be at the beginning and position can't be changed later.-->
+<a-entity position="0 1.5 -5" rotation="0 0 0" scale="3 3 3" n-layout-browser="url: https://aframe.io/"></a-entity> 
+
+<!-- preload all our textures -->
+<a-assets>
+  <a-asset-item id="bird-painted-obj" src="assets/bird-painted.obj"></a-asset-item>
+  <a-asset-item id="bird-painted-mtl" src="assets/bird-painted.mtl"></a-asset-item>
+  <a-asset-item id="rocket-obj" src="assets/rocket.obj"></a-asset-item>
+  <a-asset-item id="rocket-mtl" src="assets/rocket.mtl"></a-asset-item>
+
+
+  <img id="city" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/city.jpg">
+  <img id="city-thumb" crossorigin="anonymous" src="https://cdn.aframe.io/360-image-gallery-boilerplate/img/thumb-city.jpg">
+  
+  <img id='sky-outside' src='assets/hampton-court-small.JPG'/>
+
+  <!-- Model link template to be reused. -->
+  <script id="modelLink" type="text/html">
+    <a-entity class="modelLink"
+        geometry="primitive: box; height: .5; width: .5; depth: .5"
+        material="shader: flat; color: orange"
+        event-set__1="_event: mousedown; scale: 1 1 1"
+        event-set__2="_event: mouseup; scale: 1.2 1.2 1"
+        event-set__3="_event: mouseenter; scale: 1.2 1.2 1"
+        event-set__4="_event: mouseleave; scale: 1 1 1"
+        set-model="on: click; target: ${target}"
+        sound="on: click; src: #click-sound"></a-entity>
+  </script> 
+</a-assets>
+
+<!-- add a skybox -->
+<a-sky id="image-360" src='#city' radius='1500' ></a-sky>
+
+
+<!-- add an object -->
+<a-obj-model id="rocket" sync  sync-transform src="#rocket-obj" mtl="#rocket-mtl" avr-visible="false" scale="0.005 0.005 0.005" position="-4, 0.2, 0" rotation="-90, 0, 0" ></a-obj-model>
+
+<!-- Create a box to use as a button to change the visibility of the rocket -->
+<a-entity template="src: #modelLink" position="-4 1 1.5" data-target="#rocket"></a-entity>
+     
+
+<!-- add a floor -->
+<a-entity id="floor" class="floor-half">
+            <a-entity n-object="res:architecture/floor-4w-4l" position="-6, 0, 2"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="-6, 0, -2"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="-6, 0, -6"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="-6, 0, -10"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="-2, 0, -10"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="2, 0, -10"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="6, 0, -10"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="10, 0, -10"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="10, 0, -6"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="10, 0, -2"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="10, 0, 2"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="6, 0, 6"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="2, 0, 6"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="-2, 0, 6"></a-entity>
+
+            <a-entity n-object="res:architecture/floor-4w-4l" position="-2, 0, 2"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="-2, 0, -2"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="-2, 0, -6"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="2, 0, 2"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="2, 0, -2"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="2, 0, -6"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="6, 0, 2"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="6, 0, -2"></a-entity>
+            <a-entity n-object="res:architecture/floor-4w-4l" position="6, 0, -6"></a-entity>
+
+</a-entity>
+
+<!-- add some interactable objects -->
+    <a-entity n-spawner="res:interactables/box" position="1 1.25 3"></a-entity>
+
+    <a-entity n-spawner="res:interactables/soccerball" position="0 1.25 3"></a-entity>
+    <a-entity n-spawner="res:interactables/gem" position="2 1.25 3"></a-entity>
+
+
+</a-scene>
+
+</body>
+</html>
