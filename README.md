@@ -1,0 +1,1 @@
+# base-with-sync-objects
