@@ -42,11 +42,13 @@ class SyncAvrVisible extends AFrameComponent
 			let name = event.detail.name;
 			let oldData = event.detail.oldData;
 			let newData = event.detail.newData;
+			console.log("componentchanged " + newData);
 
 			if (name === 'avr-visible' && !refChangedLocked && oldData !== newData && self.sync.isMine)
 			{
 				//For some reason A-Frame has a misconfigured material reference if we do this too early
 				setTimeout(() => avrVisibleRef.set(newData), 0);
+				console.log(newData);
 			}
 		});
 
@@ -68,7 +70,7 @@ class SyncAvrVisible extends AFrameComponent
 	
 if (window.AFRAME)
 {
-	registerComponentClass('sync-avr-visble', SyncAvrVisible);
+	registerComponentClass('sync-avr-visible', SyncAvrVisible);
 }
 
 
