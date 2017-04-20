@@ -1,8 +1,4 @@
-
 'use strict';
-
-import {AFrameComponent} from './AFrameComponent';
-import {registerComponentClass, registerSystemClass} from './AFrameComponent';
 
 /**
 * Sync the visible property of the object between clients.
@@ -13,13 +9,9 @@ import {registerComponentClass, registerSystemClass} from './AFrameComponent';
 * @extends module:altspace/components.AFrameComponent
 */
 
-class SyncAvrVisible extends AFrameComponent
-{
-	get dependencies(){
-		return ['sync'];
-	}
-
-	init()
+AFRAME.registerComponent('sync-avr-visible', {
+	dependencies: ['avr-visible', 'sync'],
+	init: function ()
 	{
 		this.sync = this.el.components.sync;
 
@@ -28,34 +20,34 @@ class SyncAvrVisible extends AFrameComponent
 			start();
 		else
 			this.el.addEventListener('connected', this.start.bind(this));
-	}
-
-	start()
+	},
+	start: function ()
 	{
-		let isVisible = this.sync.dataRef.child('avr-visible');
-		let refChangedLocked = false;
-		let firstValue = true;
-		let self = this;
+		var avrVisibleRef = this.sync.dataRef.child('avr-visible');
+		var refChangedLocked = false;
+		var firstValue = true;
+		var self = this;
 
-		this.el.addEventListener('componentchanged', event =>
+		this.el.addEventListener('componentchanged', function (event) 
 		{
-			let name = event.detail.name;
-			let oldData = event.detail.oldData;
-			let newData = event.detail.newData;
+			var name = event.detail.name;
+			var oldData = event.detail.oldData;
+			var newData = event.detail.newData;
 			console.log("componentchanged " + newData);
 
 			if (name === 'avr-visible' && !refChangedLocked && oldData !== newData && self.sync.isMine)
 			{
 				//For some reason A-Frame has a misconfigured material reference if we do this too early
-				setTimeout(() => avrVisibleRef.set(newData), 0);
+				setTimeout(function () { avrVisibleRef.set(newData) }, 0);
 				console.log(newData);
 			}
 		});
 
-		avrVisibleReg.on('value', snapshot => {
+		avrVisibleRef.on('value', function (snapshot) {
 			if(!self.sync.isMine || firstValue)
 			{
-				let isVisible = snapshot.val();
+				var isVisible = snapshot.val();
+				if (isVisible === null) { return; }
 
 				refChangedLocked = true;
 				self.el.setAttribute('avr-visible', isVisible);
@@ -65,13 +57,4 @@ class SyncAvrVisible extends AFrameComponent
 			}
 		});
 	}
-}
-
-	
-if (window.AFRAME)
-{
-	registerComponentClass('sync-avr-visible', SyncAvrVisible);
-}
-
-
-export default SyncAvrVisible;
+});
